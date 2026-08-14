@@ -1,8 +1,8 @@
 import path from 'path';
 
 export const defaultConfig = {
-  datasetPath: process.env.DATASET_PATH || path.join(process.cwd(), 'data', 'uploaded_dataset.csv'),
-  fallbackDatasetPath: path.join(process.cwd(), 'backend', 'data', 'uploaded_dataset.csv'),
+  datasetPath: process.env.DATASET_PATH || path.join(process.cwd(), 'data', 'Uploaded_dataset.csv'),
+  fallbackDatasetPath: path.join(process.cwd(), 'backend', 'data', 'Uploaded_dataset.csv'),
   
   thresholds: {
     lowMax: 0.30,

@@ -15,6 +15,7 @@ export default function App() {
   const [refreshKey, setRefreshKey] = useState(0);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [globalSearchTerm, setGlobalSearchTerm] = useState('');
+  const [activeDatasetName, setActiveDatasetName] = useState('Uploaded_dataset.csv');
 
   const handleRefreshData = () => {
     setRefreshKey((prev) => prev + 1);
@@ -43,7 +44,7 @@ export default function App() {
         <Header
           activeTab={activeTab}
           setActiveTab={setActiveTab}
-          datasetName="uploaded_dataset.csv"
+          datasetName={activeDatasetName}
           searchTerm={globalSearchTerm}
           onSearchChange={handleGlobalSearch}
           mobileOpen={mobileOpen}
@@ -57,6 +58,7 @@ export default function App() {
               key={refreshKey}
               onSelectMember={(id) => setSelectedMemberId(id)}
               onNavigateTab={(tab) => setActiveTab(tab)}
+              onDatasetNameChange={(name) => setActiveDatasetName(name)}
             />
           )}
 

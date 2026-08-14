@@ -125,7 +125,7 @@ const csvContent = generateSyntheticDataset(1200);
 fs.mkdirSync('./data', { recursive: true });
 fs.mkdirSync('./backend/data', { recursive: true });
 
-fs.writeFileSync('./data/uploaded_dataset.csv', csvContent, 'utf8');
-fs.writeFileSync('./backend/data/uploaded_dataset.csv', csvContent, 'utf8');
+fs.writeFileSync('./data/Uploaded_dataset.csv', csvContent, 'utf8');
+fs.writeFileSync('./backend/data/Uploaded_dataset.csv', csvContent, 'utf8');
 
-console.log('Successfully generated 1200 synthetic member records in data/uploaded_dataset.csv and backend/data/uploaded_dataset.csv');
+console.log('Successfully generated 1200 synthetic member records in data/Uploaded_dataset.csv and backend/data/Uploaded_dataset.csv');

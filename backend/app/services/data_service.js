@@ -14,6 +14,23 @@ export class DataService {
     this.cachedSchema = null;
   }
 
+  static findAnyCsvInDirs() {
+    const searchDirs = [
+      path.join(process.cwd(), 'data'),
+      path.join(process.cwd(), 'backend', 'data')
+    ];
+    for (const dir of searchDirs) {
+      if (fs.existsSync(dir)) {
+        const files = fs.readdirSync(dir);
+        const csvFile = files.find(f => f.toLowerCase().endsWith('.csv'));
+        if (csvFile) {
+          return path.join(dir, csvFile);
+        }
+      }
+    }
+    return null;
+  }
+
   static loadDataset() {
     if (this.cachedMembers && this.cachedSchema) {
       return { members: this.cachedMembers, schema: this.cachedSchema };
@@ -24,9 +41,16 @@ export class DataService {
       if (fs.existsSync(defaultConfig.fallbackDatasetPath)) {
         filePath = defaultConfig.fallbackDatasetPath;
       } else {
-        throw new Error(`Dataset file not found at ${filePath}. Please upload a CSV dataset.`);
+        const discoveredCsv = this.findAnyCsvInDirs();
+        if (discoveredCsv) {
+          filePath = discoveredCsv;
+        } else {
+          throw new Error(`No CSV dataset file found in data/ or backend/data/. Please upload a CSV dataset.`);
+        }
       }
     }
+
+    const fileName = path.basename(filePath);
 
     let fileContent = fs.readFileSync(filePath, 'utf8');
     
@@ -142,6 +166,8 @@ export class DataService {
       categoricalFeatures,
       totalRows: members.length,
       columns,
+      fileName,
+      filePath,
     };
 
     this.cachedMembers = members;

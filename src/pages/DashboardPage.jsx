@@ -4,7 +4,7 @@ import { KpiCard } from '../components/KpiCard';
 import { fetchDashboard, fetchMembers } from '../services/api';
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, CartesianGrid } from 'recharts';
 
-export const DashboardPage = ({ onSelectMember, onNavigateTab }) => {
+export const DashboardPage = ({ onSelectMember, onNavigateTab, onDatasetNameChange }) => {
   const [data, setData] = useState(null);
   const [recentMembers, setRecentMembers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -22,6 +22,9 @@ export const DashboardPage = ({ onSelectMember, onNavigateTab }) => {
         if (isMounted) {
           setData(dashRes);
           setRecentMembers(membersRes.members || []);
+          if (dashRes.datasetName && onDatasetNameChange) {
+            onDatasetNameChange(dashRes.datasetName);
+          }
           setLoading(false);
         }
       })

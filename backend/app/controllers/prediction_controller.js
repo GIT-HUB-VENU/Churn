@@ -119,6 +119,7 @@ export class PredictionController {
         riskSegments,
         globalDrivers,
         modelMetrics: metrics,
+        datasetName: schema.fileName || 'Uploaded_dataset.csv',
       });
     } catch (err) {
       res.status(500).json({ error: err.message || 'Error fetching dashboard data' });

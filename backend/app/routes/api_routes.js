@@ -23,6 +23,7 @@ export function createApiRouter(churnService) {
         datasetRows: schema.totalRows,
         targetColumn: schema.targetColumn,
         idColumn: schema.idColumn,
+        datasetName: schema.fileName || 'Uploaded_dataset.csv',
       });
     } catch (err) {
       res.status(500).json({ status: 'unhealthy', error: err.message });
@@ -72,7 +73,7 @@ export function createApiRouter(churnService) {
         return res.status(400).json({ error: 'Valid CSV content is required.' });
       }
 
-      const uploadPath = path.join(process.cwd(), 'data', 'uploaded_dataset.csv');
+      const uploadPath = path.join(process.cwd(), 'data', 'Uploaded_dataset.csv');
       fs.mkdirSync(path.dirname(uploadPath), { recursive: true });
       fs.writeFileSync(uploadPath, csvContent, 'utf8');
 

@@ -7,7 +7,7 @@ CareRetain AI is a hackathon prototype designed for health plans to identify mem
 ## 🌟 Core Features
 
 1. **Dataset Integration & Schema Autodetect**:
-   - Parses the uploaded synthetic/real health plan CSV dataset (`data/uploaded_dataset.csv`).
+   - Parses the uploaded synthetic/real health plan CSV dataset (`data/Uploaded_dataset.csv`).
    - Auto-detects target churn column (`Churn`) and identifier (`Member_ID`).
    - Automatically handles missing values (median/mode imputation) and feature encoding.
    - Prevents data leakage by excluding identifier columns from prediction.
@@ -66,7 +66,7 @@ project-root/
 │   │   └── routes/
 │   │       └── api_routes.ts
 │   ├── data/
-│   │   └── uploaded_dataset.csv
+│   │   └── Uploaded_dataset.csv
 │   └── requirements.txt
 │
 ├── src/ (Frontend Views & React Components)
@@ -87,7 +87,7 @@ project-root/
 │   └── main.tsx
 │
 ├── data/
-│   └── uploaded_dataset.csv
+│   └── Uploaded_dataset.csv
 ├── tests/
 │   └── run_tests.ts
 ├── server.ts

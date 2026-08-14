@@ -2,7 +2,7 @@ import React from 'react';
 import { Search, Menu, X } from 'lucide-react';
 
 export const Header = ({
-  datasetName = 'uploaded_dataset.csv',
+  datasetName = 'Uploaded_dataset.csv',
   onSearchChange,
   searchTerm = '',
   mobileOpen,
