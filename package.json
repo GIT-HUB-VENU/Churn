@@ -5,11 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "node server.js",
-    "build": "vite build && npx esbuild server.js --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs",
-    "start": "node dist/server.cjs",
+    "build": "vite build",
+    "start": "node server.js --production",
     "preview": "vite preview",
     "test": "node tests/run_tests.js",
-    "clean": "rm -rf dist server.js"
+    "clean": "rm -rf dist"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",

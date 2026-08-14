@@ -30,19 +30,22 @@ async function startServer() {
   // API Routes MUST BE MOUNTED FIRST
   app.use('/api', createApiRouter(churnService));
 
+  const isProd = process.env.NODE_ENV === 'production' || process.argv.includes('--production');
+
   // Vite Middleware for Development vs Static Serving for Production
-  if (process.env.NODE_ENV !== 'production') {
+  if (isProd) {
+    process.env.NODE_ENV = 'production';
+    const distPath = path.join(process.cwd(), 'dist');
+    app.use(express.static(distPath, { maxAge: '1d' }));
+    app.get('*', (req, res) => {
+      res.sendFile(path.join(distPath, 'index.html'));
+    });
+  } else {
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: 'spa',
     });
     app.use(vite.middlewares);
-  } else {
-    const distPath = path.join(process.cwd(), 'dist');
-    app.use(express.static(distPath));
-    app.get('*', (req, res) => {
-      res.sendFile(path.join(distPath, 'index.html'));
-    });
   }
 
   app.listen(PORT, '0.0.0.0', () => {
