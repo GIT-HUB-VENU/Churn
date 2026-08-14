@@ -37,10 +37,11 @@ export const SettingsPage = ({ onRefreshData }) => {
     try {
       const text = await file.text();
       const res = await uploadCsvDataset(text, file.name);
-      setUploadMessage(`Successfully loaded dataset with ${res.totalRows} records! Retrained model Accuracy: ${(res.metrics.accuracy * 100).toFixed(1)}%.`);
+      const newDatasetName = res.datasetName || file.name;
+      setUploadMessage(`Successfully loaded dataset '${newDatasetName}' with ${res.totalRows} records! Retrained model Accuracy: ${(res.metrics.accuracy * 100).toFixed(1)}%.`);
       setUploading(false);
       setFile(null);
-      if (onRefreshData) onRefreshData();
+      if (onRefreshData) onRefreshData(newDatasetName);
     } catch (err) {
       setUploadError(err.message || 'Error uploading CSV dataset');
       setUploading(false);

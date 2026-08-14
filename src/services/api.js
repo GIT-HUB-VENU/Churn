@@ -1,3 +1,9 @@
+export async function fetchHealth() {
+  const res = await fetch('/api/health');
+  if (!res.ok) throw new Error('Failed to fetch health status');
+  return res.json();
+}
+
 export async function fetchDashboard() {
   const res = await fetch('/api/dashboard');
   if (!res.ok) throw new Error('Failed to fetch dashboard data');

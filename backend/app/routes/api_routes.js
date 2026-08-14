@@ -73,7 +73,8 @@ export function createApiRouter(churnService) {
         return res.status(400).json({ error: 'Valid CSV content is required.' });
       }
 
-      const uploadPath = path.join(process.cwd(), 'data', 'Uploaded_dataset.csv');
+      const targetFileName = fileName ? path.basename(fileName) : 'Uploaded_dataset.csv';
+      const uploadPath = path.join(process.cwd(), 'data', targetFileName);
       fs.mkdirSync(path.dirname(uploadPath), { recursive: true });
       fs.writeFileSync(uploadPath, csvContent, 'utf8');
 
@@ -83,7 +84,8 @@ export function createApiRouter(churnService) {
       const retrainResult = churnService.trainModel(members, schema);
 
       res.json({
-        message: `Dataset '${fileName || 'uploaded.csv'}' loaded successfully`,
+        message: `Dataset '${targetFileName}' loaded successfully`,
+        datasetName: targetFileName,
         totalRows: schema.totalRows,
         columns: schema.columns,
         targetColumn: schema.targetColumn,

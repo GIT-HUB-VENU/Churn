@@ -15,17 +15,12 @@ export class DataService {
   }
 
   static findAnyCsvInDirs() {
-    const searchDirs = [
-      path.join(process.cwd(), 'data'),
-      path.join(process.cwd(), 'backend', 'data')
-    ];
-    for (const dir of searchDirs) {
-      if (fs.existsSync(dir)) {
-        const files = fs.readdirSync(dir);
-        const csvFile = files.find(f => f.toLowerCase().endsWith('.csv'));
-        if (csvFile) {
-          return path.join(dir, csvFile);
-        }
+    const dataDir = path.join(process.cwd(), 'data');
+    if (fs.existsSync(dataDir)) {
+      const files = fs.readdirSync(dataDir);
+      const csvFile = files.find(f => f.toLowerCase().endsWith('.csv'));
+      if (csvFile) {
+        return path.join(dataDir, csvFile);
       }
     }
     return null;

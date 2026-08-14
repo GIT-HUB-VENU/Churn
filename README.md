@@ -65,8 +65,6 @@ project-root/
 │   │   │   └── recommendation_controller.ts
 │   │   └── routes/
 │   │       └── api_routes.ts
-│   ├── data/
-│   │   └── Uploaded_dataset.csv
 │   └── requirements.txt
 │
 ├── src/ (Frontend Views & React Components)

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Sidebar } from './components/Sidebar';
 import { Header } from './components/Header';
 import { DashboardPage } from './pages/DashboardPage';
@@ -8,6 +8,7 @@ import { RetentionAdvisorPage } from './pages/RetentionAdvisorPage';
 import { ResponsibleAiPage } from './pages/ResponsibleAiPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { MemberDetailModal } from './components/MemberDetailModal';
+import { fetchHealth } from './services/api';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -15,9 +16,22 @@ export default function App() {
   const [refreshKey, setRefreshKey] = useState(0);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [globalSearchTerm, setGlobalSearchTerm] = useState('');
-  const [activeDatasetName, setActiveDatasetName] = useState('Uploaded_dataset.csv');
+  const [activeDatasetName, setActiveDatasetName] = useState('');
 
-  const handleRefreshData = () => {
+  useEffect(() => {
+    fetchHealth()
+      .then((res) => {
+        if (res && res.datasetName) {
+          setActiveDatasetName(res.datasetName);
+        }
+      })
+      .catch((err) => console.warn('Could not fetch health dataset name:', err));
+  }, [refreshKey]);
+
+  const handleRefreshData = (newDatasetName) => {
+    if (newDatasetName && typeof newDatasetName === 'string') {
+      setActiveDatasetName(newDatasetName);
+    }
     setRefreshKey((prev) => prev + 1);
   };
 

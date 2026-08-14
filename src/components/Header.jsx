@@ -2,7 +2,7 @@ import React from 'react';
 import { Search, Menu, X } from 'lucide-react';
 
 export const Header = ({
-  datasetName = 'Uploaded_dataset.csv',
+  datasetName,
   onSearchChange,
   searchTerm = '',
   mobileOpen,
@@ -23,7 +23,7 @@ export const Header = ({
         <div className="flex items-center space-x-2 text-xs text-slate-500 font-medium">
           <span>Current Dataset:</span>
           <span className="text-slate-900 font-semibold italic truncate max-w-[150px] sm:max-w-[220px]">
-            {datasetName}
+            {datasetName || 'Loading...'}
           </span>
           <span className="px-2 py-0.5 bg-green-100 text-green-700 text-[10px] font-bold rounded uppercase tracking-wider border border-green-200">
             Model Active
