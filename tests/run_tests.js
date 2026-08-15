@@ -81,6 +81,13 @@ async function runTests() {
     assert(recs.some(r => r.action === 'Service Recovery'), 'Service Recovery rule triggered for unresolved cases');
     assert(recs.some(r => r.action === 'Benefit Education'), 'Benefit Education rule triggered for cost & low utilization');
 
+    // Test 5: Dataset Reset Logic
+    console.log('\nTesting Dataset Reset & Reload Logic...');
+    const reloadResult = DataService.reloadDataset();
+    const retrainResult = churnService.trainModel(reloadResult.members, reloadResult.schema);
+    assert(reloadResult.schema.fileName.includes('Default_dataset.csv') || reloadResult.schema.fileName.includes('Uploaded_dataset.csv'), 'Dataset reloaded successfully');
+    assert(retrainResult.metrics.accuracy > 0.6, `Retrained Model Accuracy is acceptable (${(retrainResult.metrics.accuracy * 100).toFixed(1)}%)`);
+
     console.log(`\n=== Test Summary: ${passed} Passed, ${failed} Failed ===`);
     if (failed > 0) process.exit(1);
   } catch (err) {

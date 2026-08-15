@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Users, AlertTriangle, ShieldCheck, TrendingUp, BarChart2, Sparkles, Search, Eye } from 'lucide-react';
+import { Users, AlertTriangle, ShieldCheck, TrendingUp, BarChart2, Sparkles, Search, Eye, RotateCcw, CheckCircle2, RefreshCw } from 'lucide-react';
 import { KpiCard } from '../components/KpiCard';
-import { fetchDashboard, fetchMembers } from '../services/api';
+import { fetchDashboard, fetchMembers, resetDefaultDataset } from '../services/api';
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, CartesianGrid } from 'recharts';
 
 export const DashboardPage = ({ onSelectMember, onNavigateTab, onDatasetNameChange }) => {
@@ -9,24 +9,29 @@ export const DashboardPage = ({ onSelectMember, onNavigateTab, onDatasetNameChan
   const [recentMembers, setRecentMembers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [resetting, setResetting] = useState(false);
+  const [resetNotice, setResetNotice] = useState(null);
+
+  const loadDashboardData = () => {
+    return Promise.all([
+      fetchDashboard(),
+      fetchMembers({ limit: 10, sortBy: 'churnProbability', sortOrder: 'desc' }),
+    ]).then(([dashRes, membersRes]) => {
+      setData(dashRes);
+      setRecentMembers(membersRes.members || []);
+      if (dashRes.datasetName && onDatasetNameChange) {
+        onDatasetNameChange(dashRes.datasetName);
+      }
+    });
+  };
 
   useEffect(() => {
     let isMounted = true;
     setLoading(true);
 
-    Promise.all([
-      fetchDashboard(),
-      fetchMembers({ limit: 10, sortBy: 'churnProbability', sortOrder: 'desc' }),
-    ])
-      .then(([dashRes, membersRes]) => {
-        if (isMounted) {
-          setData(dashRes);
-          setRecentMembers(membersRes.members || []);
-          if (dashRes.datasetName && onDatasetNameChange) {
-            onDatasetNameChange(dashRes.datasetName);
-          }
-          setLoading(false);
-        }
+    loadDashboardData()
+      .then(() => {
+        if (isMounted) setLoading(false);
       })
       .catch((err) => {
         if (isMounted) {
@@ -39,6 +44,26 @@ export const DashboardPage = ({ onSelectMember, onNavigateTab, onDatasetNameChan
       isMounted = false;
     };
   }, []);
+
+  const handleResetDataset = async () => {
+    setResetting(true);
+    setResetNotice(null);
+    try {
+      const res = await resetDefaultDataset();
+      await loadDashboardData();
+      setResetNotice({
+        type: 'success',
+        message: `Dataset successfully reset to Default_dataset.csv (${res.totalRows} members). Retrained ML Model Accuracy: ${(res.metrics.accuracy * 100).toFixed(1)}%, ROC-AUC: ${res.metrics.rocAuc}. Dashboard updated!`,
+      });
+    } catch (err) {
+      setResetNotice({
+        type: 'error',
+        message: err.message || 'Error resetting to default dataset',
+      });
+    } finally {
+      setResetting(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -63,9 +88,12 @@ export const DashboardPage = ({ onSelectMember, onNavigateTab, onDatasetNameChan
       {/* Executive Header Banner */}
       <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-blue-950 p-6 rounded-2xl text-white shadow-lg flex flex-col md:flex-row md:items-center justify-between gap-4 border border-slate-800">
         <div className="space-y-1">
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 flex-wrap gap-y-1">
             <span className="bg-blue-500/20 text-blue-300 text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full border border-blue-400/30 tracking-wider">
               XGBoost ML Active
+            </span>
+            <span className="bg-emerald-500/20 text-emerald-300 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border border-emerald-400/30 font-mono">
+              Dataset: {data.datasetName || 'Default_dataset.csv'}
             </span>
             <span className="text-slate-400 text-xs">• 80/20 Stratified Model Validation</span>
           </div>
@@ -75,23 +103,63 @@ export const DashboardPage = ({ onSelectMember, onNavigateTab, onDatasetNameChan
           </p>
         </div>
 
-        <div className="flex items-center space-x-3 shrink-0">
+        <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+          <button
+            onClick={handleResetDataset}
+            disabled={resetting}
+            className="px-3.5 py-2.5 bg-amber-600/90 hover:bg-amber-500 text-white text-xs font-bold rounded-xl shadow-md transition-all flex items-center gap-1.5 border border-amber-500/30 disabled:opacity-50"
+            title="Reset active dataset to Default_dataset.csv and retrain ML model"
+          >
+            {resetting ? (
+              <>
+                <RefreshCw className="h-4 w-4 animate-spin text-white" />
+                <span>Resetting & Retraining...</span>
+              </>
+            ) : (
+              <>
+                <RotateCcw className="h-4 w-4 text-amber-200" />
+                <span>Reset to Default Dataset</span>
+              </>
+            )}
+          </button>
           <button
             onClick={() => onNavigateTab('members')}
-            className="px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-xl shadow-md transition-all flex items-center gap-2"
+            className="px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-xl shadow-md transition-all flex items-center gap-2"
           >
             <Users className="h-4 w-4" />
             Explore Member Directory
           </button>
           <button
             onClick={() => onNavigateTab('retention')}
-            className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl border border-slate-700 transition-all flex items-center gap-2"
+            className="px-3.5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl border border-slate-700 transition-all flex items-center gap-2"
           >
             <Sparkles className="h-4 w-4 text-amber-400" />
             Advisor Workflows
           </button>
         </div>
       </div>
+
+      {/* Reset Notification Alert */}
+      {resetNotice && (
+        <div className={`p-4 rounded-xl border text-xs flex items-center justify-between gap-3 ${
+          resetNotice.type === 'success' ? 'bg-green-50 border-green-200 text-green-800' : 'bg-red-50 border-red-200 text-red-800'
+        }`}>
+          <div className="flex items-center gap-2">
+            {resetNotice.type === 'success' ? (
+              <CheckCircle2 className="h-4 w-4 text-green-600 shrink-0" />
+            ) : (
+              <AlertTriangle className="h-4 w-4 text-red-600 shrink-0" />
+            )}
+            <span className="font-medium">{resetNotice.message}</span>
+          </div>
+          <button
+            onClick={() => setResetNotice(null)}
+            className="text-xs font-bold opacity-60 hover:opacity-100 px-2 py-0.5 rounded-md hover:bg-black/5"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
 
       {/* KPI Cards Row */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">

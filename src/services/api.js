@@ -62,6 +62,18 @@ export async function uploadCsvDataset(csvContent, fileName) {
   return res.json();
 }
 
+export async function resetDefaultDataset() {
+  const res = await fetch('/api/reset-dataset', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+  });
+  if (!res.ok) {
+    const errData = await res.json().catch(() => ({}));
+    throw new Error(errData.error || 'Failed to reset to default dataset');
+  }
+  return res.json();
+}
+
 export async function updateRiskThresholds(lowMax, mediumMax) {
   const res = await fetch('/api/config/thresholds', {
     method: 'POST',
@@ -74,3 +86,4 @@ export async function updateRiskThresholds(lowMax, mediumMax) {
   }
   return res.json();
 }
+

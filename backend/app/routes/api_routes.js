@@ -97,5 +97,38 @@ export function createApiRouter(churnService) {
     }
   });
 
+  // Reset to Default Dataset Endpoint
+  router.post('/reset-dataset', (req, res) => {
+    try {
+      const defaultPath = path.join(process.cwd(), 'data', 'Default_dataset.csv');
+      const uploadPath = path.join(process.cwd(), 'data', 'Uploaded_dataset.csv');
+
+      if (!fs.existsSync(defaultPath)) {
+        return res.status(404).json({ error: 'Default dataset file (Default_dataset.csv) not found.' });
+      }
+
+      // Overwrite Uploaded_dataset.csv with Default_dataset.csv
+      const defaultContent = fs.readFileSync(defaultPath, 'utf8');
+      fs.writeFileSync(uploadPath, defaultContent, 'utf8');
+
+      // Reset file path and reload
+      DataService.setDatasetFilePath(defaultPath);
+      const { members, schema } = DataService.reloadDataset();
+      const retrainResult = churnService.trainModel(members, schema);
+
+      res.json({
+        message: "Dataset reset to 'Default_dataset.csv' successfully and model retrained.",
+        datasetName: 'Default_dataset.csv',
+        totalRows: schema.totalRows,
+        columns: schema.columns,
+        targetColumn: schema.targetColumn,
+        idColumn: schema.idColumn,
+        metrics: retrainResult.metrics,
+      });
+    } catch (err) {
+      res.status(500).json({ error: err.message || 'Error resetting to default dataset' });
+    }
+  });
+
   return router;
 }
