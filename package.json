@@ -4,11 +4,12 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "node server.js",
+    "dev": "vite",
+    "dev:backend": "cd backend && .venv\\Scripts\\python -m uvicorn app.main:app --reload --port 8000",
     "build": "vite build",
-    "start": "node server.js --production",
+    "start": "cd backend && .venv\\Scripts\\python -m uvicorn app.main:app --port 8000",
     "preview": "vite preview",
-    "test": "node tests/run_tests.js",
+    "test": "backend\\.venv\\Scripts\\python tests/run_tests.py",
     "clean": "rm -rf dist"
   },
   "dependencies": {

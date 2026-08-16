@@ -1,10 +1,17 @@
-from dataclasses import dataclass, field
-from typing import List
+from typing import List, Dict, Any
+from pydantic import BaseModel
 
-@dataclass
-class RetentionRecommendation:
-    action: str
-    priority: str
-    triggering_driver: str
-    reason: str
-    supporting_indicators: List[str] = field(default_factory=list)
+class MemberRecommendationResponse(BaseModel):
+    memberId: str
+    riskLevel: str
+    churnProbability: float
+    recommendations: List[Dict[str, Any]]
+
+class RetentionSummaryResponse(BaseModel):
+    totalHighRiskMembers: int
+    totalMediumRiskMembers: int
+    totalLowRiskMembers: int
+    predictedChurnRate: float
+    mostCommonDrivers: List[Dict[str, Any]]
+    mostRecommendedActions: List[Dict[str, Any]]
+    highPriorityOpportunitiesCount: int

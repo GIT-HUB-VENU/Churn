@@ -1,27 +1,35 @@
-from dataclasses import dataclass, field
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
+from pydantic import BaseModel
+from app.models.member_model import DriverItem
 
-@dataclass
-class LocalDriver:
-    feature: str
-    feature_label: str
-    observed_value: str
-    contribution: float
-    explanation: str
-
-@dataclass
-class PredictionResult:
-    member_id: str
-    churn_probability: float
-    risk_level: str
+class PredictionResponse(BaseModel):
+    churnProbability: float
+    riskLevel: str
     prediction: str
-    top_drivers: List[LocalDriver] = field(default_factory=list)
+    topDrivers: List[DriverItem]
 
-@dataclass
-class ModelMetrics:
+class ConfusionMatrix(BaseModel):
+    truePositive: int
+    falsePositive: int
+    trueNegative: int
+    falseNegative: int
+
+class ModelMetricsResponse(BaseModel):
+    modelType: str
     accuracy: float
     precision: float
     recall: float
-    f1_score: float
-    roc_auc: float
-    confusion_matrix: Dict[str, int]
+    f1Score: float
+    rocAuc: float
+    confusionMatrix: ConfusionMatrix
+    trainSize: int
+    testSize: int
+
+class GlobalDriverItem(BaseModel):
+    feature: str
+    featureLabel: str
+    importance: float
+
+class ThresholdUpdateRequest(BaseModel):
+    lowMax: float
+    mediumMax: float
