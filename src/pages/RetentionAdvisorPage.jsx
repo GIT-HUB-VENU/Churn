@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Sparkles, AlertTriangle, ShieldAlert, CheckCircle2, PhoneCall, ArrowRight, Layers, Award } from 'lucide-react';
+import { Sparkles, AlertTriangle, ShieldAlert, CheckCircle2, PhoneCall, ArrowRight, Layers, Award, Eye, User } from 'lucide-react';
 import { fetchRetentionSummary, fetchMembers } from '../services/api';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
-import { Eye, User } from 'lucide-react';
 
 export const RetentionAdvisorPage = ({ onNavigateTab, onSelectMember }) => {
   const [summary, setSummary] = useState(null);

@@ -13,7 +13,11 @@ class UploadController:
         if not csv_content or not isinstance(csv_content, str):
             raise HTTPException(status_code=400, detail="Valid CSV content is required.")
 
-        target_file_name = os.path.basename(file_name) if file_name else "Uploaded_dataset.csv"
+        raw_name = os.path.basename(file_name) if file_name else "Uploaded_dataset.csv"
+        target_file_name = "".join(c for c in raw_name if c.isalnum() or c in (".", "_", "-"))
+        if not target_file_name or not target_file_name.endswith(".csv"):
+            target_file_name = "Uploaded_dataset.csv"
+
         upload_path = settings.DATA_DIR / target_file_name
         
         settings.DATA_DIR.mkdir(parents=True, exist_ok=True)
