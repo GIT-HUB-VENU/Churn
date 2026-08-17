@@ -1480,12 +1480,6 @@ class ChurnService:
                 prob
             )
         )
-
-        # ---------------------------------------------------------
-        # IMPORTANT:
-        # Use tuned threshold, NOT hard-coded 0.50.
-        # ---------------------------------------------------------
-
         prediction = (
 
             "Churn"
