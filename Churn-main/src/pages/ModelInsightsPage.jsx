@@ -61,7 +61,7 @@ export const ModelInsightsPage = () => {
           </div>
           <div>
             <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Machine Learning Model Diagnostics</h1>
-            <p className="text-xs text-slate-500 mt-0.5">Performance evaluation, confusion matrix, recall and feature importance for CatBoost with Threshold Tuning</p>
+            <p className="text-xs text-slate-500 mt-0.5">Performance evaluation, confusion matrix, and feature importance for CatBoost with Threshold Tuning</p>
           </div>
         </div>
       </div>
