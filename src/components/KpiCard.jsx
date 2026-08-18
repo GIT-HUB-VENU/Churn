@@ -10,52 +10,71 @@ export const KpiCard = ({
 }) => {
   const styles = {
     blue: {
-      card: 'p-3 border border-slate-200 rounded-lg bg-slate-50',
-      title: 'text-[10px] text-slate-500 uppercase font-bold mb-1 tracking-wider',
-      value: 'text-2xl font-bold font-mono text-slate-900',
-      sub: 'text-[10px] text-slate-400 mt-1',
+      card: 'p-4 sm:p-5 border border-stone-200/80 rounded-2xl bg-white shadow-xs hover:border-teal-300/80 transition-all',
+      title: 'text-[11px] text-stone-500 uppercase font-bold tracking-wider',
+      value: 'text-2xl sm:text-3xl font-extrabold text-stone-900 mt-1 font-sans',
+      sub: 'text-xs text-stone-500 mt-1',
+      iconBg: 'bg-teal-50 text-teal-700',
     },
     red: {
-      card: 'p-3 border rounded-lg border-red-100 bg-red-50',
-      title: 'text-[10px] text-red-600 uppercase font-bold mb-1 tracking-wider',
-      value: 'text-2xl font-bold font-mono text-red-700',
-      sub: 'text-[10px] text-red-500 mt-1',
+      card: 'p-4 sm:p-5 border border-rose-200/80 rounded-2xl bg-white shadow-xs hover:border-rose-300 transition-all border-l-4 border-l-rose-500',
+      title: 'text-[11px] text-rose-700 uppercase font-bold tracking-wider',
+      value: 'text-2xl sm:text-3xl font-extrabold text-stone-900 mt-1 font-sans',
+      sub: 'text-xs text-rose-600/80 mt-1 font-medium',
+      iconBg: 'bg-rose-50 text-rose-600',
     },
     amber: {
-      card: 'p-3 border rounded-lg border-orange-100 bg-orange-50',
-      title: 'text-[10px] text-orange-600 uppercase font-bold mb-1 tracking-wider',
-      value: 'text-2xl font-bold font-mono text-orange-700',
-      sub: 'text-[10px] text-orange-500 mt-1',
+      card: 'p-4 sm:p-5 border border-amber-200/80 rounded-2xl bg-white shadow-xs hover:border-amber-300 transition-all border-l-4 border-l-amber-500',
+      title: 'text-[11px] text-amber-800 uppercase font-bold tracking-wider',
+      value: 'text-2xl sm:text-3xl font-extrabold text-stone-900 mt-1 font-sans',
+      sub: 'text-xs text-amber-700/80 mt-1 font-medium',
+      iconBg: 'bg-amber-50 text-amber-600',
     },
     emerald: {
-      card: 'p-3 border rounded-lg border-green-100 bg-green-50',
-      title: 'text-[10px] text-green-600 uppercase font-bold mb-1 tracking-wider',
-      value: 'text-2xl font-bold font-mono text-green-700',
-      sub: 'text-[10px] text-green-500 mt-1',
+      card: 'p-4 sm:p-5 border border-teal-200/80 rounded-2xl bg-white shadow-xs hover:border-teal-300 transition-all border-l-4 border-l-teal-600',
+      title: 'text-[11px] text-teal-800 uppercase font-bold tracking-wider',
+      value: 'text-2xl sm:text-3xl font-extrabold text-stone-900 mt-1 font-sans',
+      sub: 'text-xs text-teal-700/80 mt-1 font-medium',
+      iconBg: 'bg-teal-50 text-teal-600',
     },
     purple: {
-      card: 'p-3 border rounded-lg border-purple-100 bg-purple-50',
-      title: 'text-[10px] text-purple-600 uppercase font-bold mb-1 tracking-wider',
-      value: 'text-2xl font-bold font-mono text-purple-700',
-      sub: 'text-[10px] text-purple-500 mt-1',
+      card: 'p-4 sm:p-5 border border-stone-200/80 rounded-2xl bg-white shadow-xs hover:border-teal-300/80 transition-all',
+      title: 'text-[11px] text-stone-500 uppercase font-bold tracking-wider',
+      value: 'text-2xl sm:text-3xl font-extrabold text-teal-800 mt-1 font-sans',
+      sub: 'text-xs text-stone-500 mt-1',
+      iconBg: 'bg-teal-50 text-teal-700',
     },
     dark: {
-      card: 'p-3 border rounded-lg bg-slate-900 text-white border-slate-800',
-      title: 'text-[10px] text-blue-300 uppercase font-bold mb-1 tracking-wider',
-      value: 'text-2xl font-bold font-mono text-white',
-      sub: 'text-[10px] text-blue-400 mt-1',
+      card: 'p-4 sm:p-5 border border-stone-200/80 rounded-2xl bg-white shadow-xs hover:border-stone-300 transition-all',
+      title: 'text-[11px] text-stone-500 uppercase font-bold tracking-wider',
+      value: 'text-2xl sm:text-3xl font-extrabold text-stone-900 mt-1 font-sans',
+      sub: 'text-xs text-stone-500 mt-1',
+      iconBg: 'bg-stone-100 text-stone-700',
     },
-  }[colorScheme];
+  }[colorScheme] || {
+    card: 'p-4 sm:p-5 border border-stone-200/80 rounded-2xl bg-white shadow-xs',
+    title: 'text-[11px] text-stone-500 uppercase font-bold tracking-wider',
+    value: 'text-2xl sm:text-3xl font-extrabold text-stone-900 mt-1 font-sans',
+    sub: 'text-xs text-stone-500 mt-1',
+    iconBg: 'bg-stone-100 text-stone-600',
+  };
 
   return (
     <div className={styles.card}>
       <div className="flex items-center justify-between">
         <div className={styles.title}>{title}</div>
-        {badgeText && (
-          <span className="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-red-200 text-red-800">
-            {badgeText}
-          </span>
-        )}
+        <div className="flex items-center gap-1.5">
+          {badgeText && (
+            <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200/80">
+              {badgeText}
+            </span>
+          )}
+          {Icon && (
+            <div className={`p-1.5 rounded-lg ${styles.iconBg}`}>
+              <Icon className="h-4 w-4" />
+            </div>
+          )}
+        </div>
       </div>
       <div className={styles.value}>{value}</div>
       {subtitle && <div className={styles.sub}>{subtitle}</div>}

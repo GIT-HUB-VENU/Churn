@@ -1,52 +1,112 @@
-import React from 'react';
-import { Search, Menu, X } from 'lucide-react';
+import React, { useState } from 'react';
+import { Menu, X, ShieldCheck } from 'lucide-react';
 
 export const Header = ({
+  activeTab,
+  setActiveTab,
   datasetName,
-  onSearchChange,
-  searchTerm = '',
-  mobileOpen,
-  setMobileOpen,
 }) => {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const navItems = [
+    { id: 'dashboard', label: 'DASHBOARD' },
+    { id: 'members', label: 'MEMBER DIRECTORY' },
+    { id: 'retention', label: 'RETENTION ADVISOR' },
+    { id: 'model', label: 'MODEL INSIGHTS' },
+    { id: 'settings', label: 'DATA & SETTINGS' },
+    { id: 'responsible_ai', label: 'RESPONSIBLE AI' },
+  ];
+
+  const handleNavClick = (tabId) => {
+    setActiveTab(tabId);
+    setMobileMenuOpen(false);
+  };
+
   return (
-    <header className="h-14 bg-white border-b border-slate-200 flex items-center justify-between px-4 sm:px-6 sticky top-0 z-20 shrink-0">
-      <div className="flex items-center space-x-3 sm:space-x-4">
-        {setMobileOpen && (
+    <header className="sticky top-4 mb-8 sm:mb-10 z-40 w-full rounded-full bg-transparent backdrop-blur-md border border-stone-300/60 shadow-2xs transition-all">
+      <div className="px-4 sm:px-6 h-12 sm:h-13 flex items-center justify-between">
+        
+        {/* Desktop Navigation Links — Left-Aligned Floating Pill Navigation */}
+        <nav className="hidden md:flex items-center space-x-1 sm:space-x-1.5 h-full">
+          {navItems.map((item) => {
+            const isActive = activeTab === item.id;
+            return (
+              <button
+                key={item.id}
+                onClick={() => handleNavClick(item.id)}
+                className={`px-3.5 py-1.5 rounded-full text-[11px] font-bold tracking-wider transition-all ${
+                  isActive
+                    ? 'bg-teal-50/90 text-teal-800 font-extrabold shadow-2xs'
+                    : 'text-stone-600 hover:text-stone-900 hover:bg-stone-100/60'
+                }`}
+              >
+                <span>{item.label}</span>
+              </button>
+            );
+          })}
+        </nav>
+
+        {/* Right Area: Restored Green/Turquoise Dataset Status Block */}
+        <div className="hidden md:flex items-center space-x-2 shrink-0">
+          <div className="flex items-center space-x-1.5 px-3 py-1 bg-emerald-50 text-emerald-800 text-[10px] font-bold rounded-full border border-emerald-200/80 shadow-2xs">
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+            <span className="text-stone-500 font-normal">Dataset:</span>
+            <span className="italic truncate max-w-[130px] text-emerald-900 font-semibold">
+              {datasetName || 'Default_dataset.csv'}
+            </span>
+            <span className="px-1.5 py-0.2 bg-emerald-200/70 text-emerald-900 rounded text-[9px] uppercase font-mono font-extrabold ml-0.5">
+              Active
+            </span>
+          </div>
+        </div>
+
+        {/* Mobile Header Layout */}
+        <div className="flex md:hidden items-center justify-between w-full px-1">
+          <div className="flex items-center space-x-2">
+            <span className="text-xs font-extrabold tracking-wider text-teal-900 uppercase">
+              {navItems.find((n) => n.id === activeTab)?.label || 'NAVIGATION'}
+            </span>
+            <span className="px-2 py-0.5 bg-emerald-50 text-emerald-700 text-[9px] font-bold rounded-full border border-emerald-200">
+              Active
+            </span>
+          </div>
           <button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden p-1.5 text-slate-600 hover:text-slate-900 focus:outline-none"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="p-1.5 text-stone-600 hover:text-stone-900 focus:outline-none rounded-full hover:bg-stone-100"
           >
-            {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
-        )}
-
-        <div className="flex items-center space-x-2 text-xs text-slate-500 font-medium">
-          <span>Current Dataset:</span>
-          <span className="text-slate-900 font-semibold italic truncate max-w-[150px] sm:max-w-[220px]">
-            {datasetName || 'Loading...'}
-          </span>
-          <span className="px-2 py-0.5 bg-green-100 text-green-700 text-[10px] font-bold rounded uppercase tracking-wider border border-green-200">
-            Model Active
-          </span>
         </div>
+
       </div>
 
-      <div className="flex items-center space-x-3">
-        <div className="relative hidden sm:block">
-          <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-slate-400" />
-          <input
-            type="text"
-            placeholder="Search Member ID..."
-            value={searchTerm}
-            onChange={(e) => onSearchChange && onSearchChange(e.target.value)}
-            className="bg-slate-100 border border-slate-200 rounded-md pl-8 pr-3 py-1.5 text-xs w-44 sm:w-52 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:bg-white"
-          />
+      {/* Mobile Dropdown Navigation */}
+      {mobileMenuOpen && (
+        <div className="md:hidden border-t border-stone-200/80 bg-white/95 backdrop-blur-md rounded-b-2xl px-4 py-3 space-y-1 shadow-lg animate-in slide-in-from-top-2 duration-150 mt-1">
+          <div className="pb-2 mb-2 border-b border-stone-100 flex items-center justify-between text-xs">
+            <span className="text-stone-500">Dataset Status:</span>
+            <span className="font-mono font-bold text-emerald-700 text-[11px] truncate max-w-[180px]">
+              {datasetName || 'Default_dataset.csv'}
+            </span>
+          </div>
+          {navItems.map((item) => {
+            const isActive = activeTab === item.id;
+            return (
+              <button
+                key={item.id}
+                onClick={() => handleNavClick(item.id)}
+                className={`w-full text-left px-3 py-2 rounded-xl text-xs font-bold tracking-wider transition-colors ${
+                  isActive
+                    ? 'bg-teal-50 text-teal-800 border-l-4 border-teal-600'
+                    : 'text-stone-600 hover:bg-stone-50 hover:text-stone-900'
+                }`}
+              >
+                {item.label}
+              </button>
+            );
+          })}
         </div>
-
-        <div className="w-8 h-8 rounded-full bg-blue-100 border border-blue-200 flex items-center justify-center text-xs font-bold text-blue-700 shadow-xs">
-          JD
-        </div>
-      </div>
+      )}
     </header>
   );
 };
