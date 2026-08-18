@@ -1,6 +1,6 @@
 # CareRetain AI — Member Churn Prediction & Retention Advisor
 
-CareRetain AI is an enterprise AI solution designed for health plans to identify members at risk of disenrolling, explain churn drivers in plain language, and recommend compliant, rule-based retention actions. Built with a Python 3.11 FastAPI backend running an XGBoost ML pipeline and a React + Vite frontend.
+CareRetain AI is an enterprise AI solution designed for health plans to identify members at risk of disenrolling, explain churn drivers in plain language, and recommend compliant, rule-based retention actions. Built with a Python 3.11 FastAPI backend running a CatBoost ML pipeline with decision threshold tuning and a React + Vite frontend.
 
 ---
 
@@ -12,8 +12,8 @@ CareRetain AI is an enterprise AI solution designed for health plans to identify
    - Automatically handles missing values (median/mode imputation) and categorical feature encoding.
    - Prevents data leakage by excluding identifier columns from prediction.
 
-2. **Python XGBoost Machine Learning Pipeline**:
-   - Supervised XGBoost Classifier (`xgboost.XGBClassifier`) for predicting churn probability and risk tier (`LOW`, `MEDIUM`, `HIGH`).
+2. **Python CatBoost Machine Learning Pipeline**:
+   - Supervised CatBoost Classifier (`catboost.CatBoostClassifier`) with threshold tuning for predicting churn probability and risk tier (`LOW`, `MEDIUM`, `HIGH`).
    - Configurable risk thresholds (e.g. LOW `< 0.30`, MEDIUM `0.30–0.69`, HIGH `>= 0.70`).
    - Comprehensive model validation: Accuracy (89.58%), Precision, Recall, F1 Score, ROC-AUC (0.9474), and Confusion Matrix.
 
@@ -138,7 +138,7 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 - `GET /api/members`: Searchable, filterable, and paginated member list
 - `GET /api/members/:member_id`: Detailed risk diagnostic & retention recommendations
 - `POST /api/predict`: Ad-hoc churn prediction for single member record
-- `GET /api/model/metrics`: XGBoost performance metrics & confusion matrix
+- `GET /api/model/metrics`: CatBoost performance metrics & confusion matrix
 - `GET /api/model/drivers`: Global feature importance ranking
 - `GET /api/retention/summary`: Aggregated retention opportunities & action distributions
 - `POST /api/upload-csv`: Upload custom CSV dataset dynamically

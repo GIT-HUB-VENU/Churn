@@ -2,7 +2,7 @@ import os
 import joblib
 import numpy as np
 import pandas as pd
-import xgboost as xgb
+import catboost as cb
 from pathlib import Path
 from typing import Dict, Any, List, Tuple, Optional
 from sklearn.metrics import (
@@ -20,7 +20,8 @@ from app.utils.helpers import safe_float
 
 class ChurnService:
     def __init__(self):
-        self.model: Optional[xgb.XGBClassifier] = None
+        self.model: Optional[cb.CatBoostClassifier] = None
+        self.optimal_threshold: float = 0.5
         self.processed_data: Optional[Dict[str, Any]] = None
         self.schema: Optional[Dict[str, Any]] = None
         self.metrics: Optional[Dict[str, Any]] = None
@@ -64,27 +65,39 @@ class ChurnService:
         X_test = np.array(self.processed_data["XTest"], dtype=np.float32)
         y_test = np.array(self.processed_data["yTest"], dtype=np.int32)
 
-        # Initialize and fit XGBClassifier
-        self.model = xgb.XGBClassifier(
-            n_estimators=settings.N_ESTIMATORS,
+        # Initialize and fit CatBoostClassifier
+        self.model = cb.CatBoostClassifier(
+            iterations=settings.N_ESTIMATORS,
             learning_rate=settings.LEARNING_RATE,
-            max_depth=settings.MAX_DEPTH,
-            min_child_weight=settings.MIN_SAMPLES_SPLIT,
-            reg_lambda=settings.L2_REG,
-            random_state=42,
-            eval_metric="logloss",
+            depth=settings.MAX_DEPTH,
+            l2_leaf_reg=settings.L2_REG,
+            random_seed=42,
+            verbose=0,
         )
 
         self.model.fit(X_train, y_train)
+
+        # Threshold Tuning: Find optimal decision threshold maximizing F1 score on training set
+        best_threshold = 0.5
+        best_f1 = -1.0
+        if len(X_train) > 0:
+            train_probs = self.model.predict_proba(X_train)[:, 1]
+            for thresh in np.linspace(0.1, 0.9, 81):
+                preds = (train_probs >= thresh).astype(int)
+                score = float(f1_score(y_train, preds, zero_division=0))
+                if score > best_f1:
+                    best_f1 = score
+                    best_threshold = float(thresh)
+        self.optimal_threshold = round(best_threshold, 4)
 
         # Save model & artifacts to disk
         settings.ARTIFACTS_DIR.mkdir(parents=True, exist_ok=True)
         model_path = settings.ARTIFACTS_DIR / "churn_model.joblib"
         joblib.dump(self.model, model_path)
 
-        # Evaluate on Test Set
+        # Evaluate on Test Set using tuned threshold
         test_probs = self.model.predict_proba(X_test)[:, 1] if len(X_test) > 0 else np.array([])
-        test_preds = (test_probs >= 0.5).astype(int) if len(test_probs) > 0 else np.array([])
+        test_preds = (test_probs >= self.optimal_threshold).astype(int) if len(test_probs) > 0 else np.array([])
 
         if len(y_test) > 0:
             acc = float(accuracy_score(y_test, test_preds))
@@ -111,7 +124,8 @@ class ChurnService:
             tp, fp, tn, fn = 0, 0, 0, 0
 
         self.metrics = {
-            "modelType": "Python XGBoost (xgboost.XGBClassifier)",
+            "modelType": "Python CatBoost with Threshold Tuning (catboost.CatBoostClassifier)",
+            "optimalThreshold": self.optimal_threshold,
             "accuracy": round(acc, 4),
             "precision": round(prec, 4),
             "recall": round(rec, 4),
@@ -157,7 +171,7 @@ class ChurnService:
             m_id = str(m.get(id_col) or m.get("Member_ID", f"MMB-{10001 + i}"))
             prob = round(float(probs[i]), 4) if i < len(probs) else 0.0
             risk_level = self.classify_risk_level(prob)
-            prediction = "Churn" if prob >= 0.5 else "Retained"
+            prediction = "Churn" if prob >= self.optimal_threshold else "Retained"
 
             pred_map[m_id] = {
                 "probability": prob,
@@ -169,7 +183,7 @@ class ChurnService:
         self._refresh_caches_for_new_thresholds()
 
     def _refresh_caches_for_new_thresholds(self) -> None:
-        """Recompute dashboard KPIs and retention summary statistics in memory (<1ms) without retraining XGBoost."""
+        """Recompute dashboard KPIs and retention summary statistics in memory (<1ms) without retraining CatBoost."""
         if not self.cached_members or not self.schema:
             return
 
@@ -360,7 +374,7 @@ class ChurnService:
 
         prob = round(prob, 4)
         risk_level = self.classify_risk_level(prob)
-        prediction = "Churn" if prob >= 0.5 else "Retained"
+        prediction = "Churn" if prob >= self.optimal_threshold else "Retained"
 
         return {
             "probability": prob,
@@ -410,7 +424,7 @@ class ChurnService:
         feature_names = self.processed_data["featureNames"]
         feature_labels = self.processed_data["featureLabels"]
         
-        raw_importances = self.model.feature_importances_
+        raw_importances = np.array(self.model.get_feature_importance(), dtype=np.float32)
         sum_imp = float(np.sum(raw_importances))
         
         if sum_imp == 0:

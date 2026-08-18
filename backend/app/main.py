@@ -20,7 +20,7 @@ churn_service = ChurnService()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    print("Loading CareRetain AI dataset and training Python XGBoost ML Model...")
+    print("Loading CareRetain AI dataset and training Python CatBoost ML Model...")
     try:
         members, schema = DataService.load_dataset()
         print(f"Successfully loaded dataset with {schema['totalRows']} member records.")

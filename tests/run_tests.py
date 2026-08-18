@@ -38,8 +38,8 @@ def run_tests():
         assert_true(len(schema["numericalFeatures"]) > 0, "Numerical features identified")
         assert_true(len(schema["categoricalFeatures"]) > 0, "Categorical features identified")
 
-        # Test 2: Python XGBoost Model Training
-        print("\nTesting Python XGBoost Churn ML Pipeline...")
+        # Test 2: Python CatBoost Model Training
+        print("\nTesting Python CatBoost Churn ML Pipeline...")
         cs = ChurnService()
         train_result = cs.train_model(members, schema)
         metrics = train_result["metrics"]

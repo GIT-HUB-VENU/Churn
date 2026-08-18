@@ -61,7 +61,7 @@ export const ModelInsightsPage = () => {
           </div>
           <div>
             <h1 className="text-2xl font-bold text-stone-900 tracking-tight">Machine Learning Model Diagnostics</h1>
-            <p className="text-xs text-stone-500 mt-0.5">Performance evaluation, confusion matrix, and permutation feature importance for XGBoost Gradient Boosted Trees</p>
+            <p className="text-xs text-stone-500 mt-0.5">Performance evaluation, confusion matrix, and permutation feature importance for CatBoost Gradient Boosted Trees</p>
           </div>
         </div>
       </div>
