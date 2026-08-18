@@ -88,7 +88,7 @@ export const SettingsPage = ({ onRefreshData }) => {
           <FileSpreadsheet className="h-5 w-5 text-teal-700" />
           <div>
             <h3 className="text-base font-bold text-stone-900">Upload Custom CSV Dataset</h3>
-            <p className="text-xs text-stone-500">Automatically retrains XGBoost ML model on newly uploaded dataset</p>
+            <p className="text-xs text-stone-500">Automatically retrains CatBoost ML model on newly uploaded dataset</p>
           </div>
         </div>
 

@@ -104,7 +104,7 @@ export const DashboardPage = ({ onSelectMember, onNavigateTab, onDatasetNameChan
           {/* Model & Dataset Badges */}
           <div className="flex items-center space-x-2 flex-wrap gap-y-1.5 pt-1">
             <span className="bg-teal-50 text-teal-800 text-[11px] font-bold uppercase px-3 py-1 rounded-full border border-teal-200/80 tracking-wider">
-              XGBoost ML Active
+              CatBoost ML Active
             </span>
             <span className="bg-stone-100 text-stone-700 text-[11px] font-bold px-3 py-1 rounded-full border border-stone-200 font-mono">
               Dataset: {data.datasetName || 'Default_dataset.csv'}
