@@ -31,11 +31,21 @@ class RecommendationController:
             member, risk_level, probability, top_drivers
         )
 
+        # Estimate post-retention churn probability based on recommendation impact
+        reduction_map = {"HIGH": 0.15, "MEDIUM": 0.10, "LOW": 0.05}
+        remaining = probability
+        for i, rec in enumerate(recommendations):
+            # Diminishing returns for each subsequent recommendation
+            factor = reduction_map.get(rec.get("priority", "LOW"), 0.05)
+            remaining *= (1 - factor * (0.7 ** i))
+        post_retention_probability = round(max(remaining, 0.01), 4)
+
         return {
             "memberId": member_id,
             "riskLevel": risk_level,
             "churnProbability": probability,
             "recommendations": recommendations,
+            "postRetentionProbability": post_retention_probability,
         }
 
     def get_retention_summary(self) -> Dict[str, Any]:

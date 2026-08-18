@@ -240,6 +240,13 @@ export const MemberDetailModal = ({ memberId, onClose }) => {
                   Note: Decision-support tool based on observed dataset indicators. All outreach subject to authorized plan guidelines.
                 </div>
               </div>
+
+              {/* Post-Retention Expected Churn Probability */}
+              {data.postRetentionProbability != null && (
+                <p className="text-sm font-bold text-center" style={{ color: '#16a34a' }}>
+                  Expected churn probability after retention advice is applied: {(data.postRetentionProbability * 100).toFixed(1)}%
+                </p>
+              )}
             </>
           )}
         </div>

@@ -106,6 +106,14 @@ class MemberController:
             member, risk_level, probability, top_drivers
         )
 
+        # Calculate post-retention churn probability using diminishing returns
+        reduction_map = {"HIGH": 0.15, "MEDIUM": 0.10, "LOW": 0.05}
+        remaining = probability
+        for i, rec in enumerate(recommendations):
+            factor = reduction_map.get(rec.get("priority", "LOW"), 0.05)
+            remaining *= (1 - factor * (0.7 ** i))
+        post_retention_probability = round(max(remaining, 0.01), 4)
+
         ai_explanation = await GeminiService.generate_member_explanation(
             member_id=str(member.get(schema["idColumn"], "")),
             plan_type=str(member.get("Plan_Type") or "Plan"),
@@ -123,4 +131,5 @@ class MemberController:
             "topDrivers": top_drivers,
             "recommendations": recommendations,
             "aiExplanation": ai_explanation,
+            "postRetentionProbability": post_retention_probability,
         }
