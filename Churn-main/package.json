@@ -5,11 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "dev:backend": "cd backend && .venv\\Scripts\\python -m uvicorn app.main:app --reload --reload-dir app --port 8000",
+    "dev:backend": "cd backend && python -m uvicorn app.main:app --reload --port 8000",
     "build": "vite build",
-    "start": "cd backend && .venv\\Scripts\\python -m uvicorn app.main:app --port 8000",
+    "start": "cd backend && python3 -m uvicorn app.main:app --host 0.0.0.0 --port $PORT",
     "preview": "vite preview",
-    "test": "backend\\.venv\\Scripts\\python tests/run_tests.py",
+    "test": "python tests/run_tests.py",
     "clean": "rm -rf dist"
   },
   "dependencies": {

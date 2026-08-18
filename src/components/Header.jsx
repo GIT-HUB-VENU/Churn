@@ -23,7 +23,7 @@ export const Header = ({
   };
 
   return (
-    <header className="sticky top-4 mb-8 sm:mb-10 z-40 w-full rounded-full bg-transparent backdrop-blur-md border border-stone-300/60 shadow-2xs transition-all">
+    <header className="sticky top-4 mb-6 sm:mb-8 z-40 w-full rounded-full bg-white/70 backdrop-blur-md border border-stone-300/60 shadow-2xs transition-all">
       <div className="px-4 sm:px-6 h-12 sm:h-13 flex items-center justify-between">
         
         {/* Desktop Navigation Links — Left-Aligned Floating Pill Navigation */}
