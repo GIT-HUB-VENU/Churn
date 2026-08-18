@@ -111,14 +111,16 @@ npm install
 # Set up Python virtual environment and install backend dependencies
 cd backend
 python -m venv .venv
-.\.venv\Scripts\pip install -r requirements.txt
+# On Windows: .venv\Scripts\pip install -r requirements.txt
+# On Linux/macOS: source .venv/bin/activate && pip install -r requirements.txt
+pip install -r requirements.txt
 cd ..
 ```
 
 ### 2. Run Automated Integration Tests & Benchmarks
 ```bash
 npm test
-# or: backend\.venv\Scripts\python tests/run_tests.py
+# or: python tests/run_tests.py
 ```
 
 ### 3. Start Full-Stack Development Server

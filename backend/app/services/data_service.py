@@ -19,10 +19,17 @@ class DataService:
 
     @classmethod
     def find_any_csv_in_dirs(cls) -> Optional[str]:
-        data_dir = Path(settings.DATA_DIR)
-        if data_dir.exists():
-            for f in data_dir.glob("*.csv"):
-                return str(f)
+        candidate_dirs = [
+            settings.DATA_DIR,
+            settings.BACKEND_DATA_DIR,
+            Path("data"),
+            Path("backend/data"),
+            Path("../data")
+        ]
+        for candidate_dir in candidate_dirs:
+            if candidate_dir.exists():
+                for f in candidate_dir.glob("*.csv"):
+                    return str(f)
         return None
 
     @classmethod
@@ -31,17 +38,31 @@ class DataService:
             return cls._cached_members, cls._cached_schema
 
         file_path = cls._active_file_path
-        if not os.path.exists(file_path):
-            if os.path.exists(settings.FALLBACK_DATASET_PATH):
-                file_path = str(settings.FALLBACK_DATASET_PATH)
-            elif os.path.exists(settings.DEFAULT_DATASET_PATH):
-                file_path = str(settings.DEFAULT_DATASET_PATH)
+        resolved_path = None
+        if os.path.isabs(file_path) and os.path.exists(file_path):
+            resolved_path = file_path
+        elif os.path.exists(file_path):
+            resolved_path = os.path.abspath(file_path)
+        elif (settings.PROJECT_ROOT / file_path).exists():
+            resolved_path = str(settings.PROJECT_ROOT / file_path)
+        elif (settings.DATA_DIR / file_path).exists():
+            resolved_path = str(settings.DATA_DIR / file_path)
+        elif os.path.exists(settings.FALLBACK_DATASET_PATH):
+            resolved_path = str(settings.FALLBACK_DATASET_PATH)
+        elif os.path.exists(settings.DEFAULT_DATASET_PATH):
+            resolved_path = str(settings.DEFAULT_DATASET_PATH)
+        elif (settings.PROJECT_ROOT / "data" / "Default_dataset.csv").exists():
+            resolved_path = str(settings.PROJECT_ROOT / "data" / "Default_dataset.csv")
+        elif (settings.BACKEND_DATA_DIR / "Default_dataset.csv").exists():
+            resolved_path = str(settings.BACKEND_DATA_DIR / "Default_dataset.csv")
+        else:
+            discovered = cls.find_any_csv_in_dirs()
+            if discovered:
+                resolved_path = discovered
             else:
-                discovered = cls.find_any_csv_in_dirs()
-                if discovered:
-                    file_path = discovered
-                else:
-                    raise FileNotFoundError("No CSV dataset file found in data/ or backend/data/. Please upload a CSV dataset.")
+                raise FileNotFoundError("No CSV dataset file found in data/ or backend/data/. Please upload a CSV dataset.")
+
+        file_path = resolved_path
 
         file_name = os.path.basename(file_path)
 
